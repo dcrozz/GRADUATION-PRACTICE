@@ -1,6 +1,3 @@
-from time import time
-from patterns import patterns, Mismatch 
-import ipdb
 def getWord():
 	with open('mod.txt') as raw:
 		iob2lst = []
@@ -121,8 +118,6 @@ def input():
 				testne[-1].append(cur_line[-1])
 		return testword,testne
 
-def evaluate(a,b):
-	return map(lambda x,y: x == y ,a,b)
 
 # def example():
 observation, testne = input()
@@ -133,28 +128,20 @@ for obs in observation:
 	calne.append([])
 calne.pop()
 
-def eva():
-	
-
-vallst = map(evaluate,calne,testne)
-i = 0
-all = reduce(lambda x,y: x+y,[len(itm) for itm in vallst])
-for itm in vallst:
-	for key in itm:
-		if key == True:
-			i += 1
-accuracy = i*1.0/all
-print 'total_accuracy = ' + accuracy + '\n'
-print 'B-protein accuracy = ' + 
-print 'I-protein accuracy = ' + 
-print 'B-cell_type accuracy = ' + 
-print 'I-cell_type accuracy = ' + 
-print 'B-cell_line accuracy = ' + 
-print 'I-cell_line accuracy = ' + 
-print 'B-DNA accuracy = ' + 
-print 'I-DNA accuracy = ' +
-print 'B-RNA accuracy = ' +
-print 'I-RNA accuracy = ' +
-
-
-# example()
+###########################################
+#compare calne & testne
+def evaluate(a,b):
+	#return map(lambda x,y: x == y ,a,b)
+	if a != 'O' and a == b:
+		return 'A'
+	elif a == 'O' and a == b:
+		return 'B'
+	elif a != 'O' and a != b:
+		return 'C'
+	elif a == 'O' and a !=b:
+		return 'D'
+test_cal = reduce(list.__add__,calne)
+test_tes = reduce(list.__add__,testne)
+vallst = map(evaluate,test_tes,test_cal)
+recall = vallst.count('A')*1.0/(vallst.count('A')+vallst.count('C'))
+accuracy = vallst.count('A')*1.0/(vallst.count('A')+vallst.count('B'))
