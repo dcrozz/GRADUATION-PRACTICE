@@ -1,0 +1,7 @@
+*.txt
+*.docx
+*.xlsx
+result_file*
+model*
+*.png
+*.iob2
