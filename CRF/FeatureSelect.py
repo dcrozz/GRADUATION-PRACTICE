@@ -1,14 +1,16 @@
 """
 Feature Selection by Chi measure
 """
-def inFile(filename):
+#coding:utf-8
+import ipdb
+def getFile(filename):
 	lst = []	
 	with open(filename) as f:
 		for line in f.readlines():
 			cur_line = line.strip().split('\t')
 			try:
 				cur_line[2]
-				lst.append(cur_line[:2]+['0' for x in range(44)] + cur_line[2:11]+ cur_line[12:])
+				lst.append(cur_line)
 			except IndexError:
 				pass
 	return lst
@@ -48,10 +50,22 @@ def listAdd(a,b):
 			tmp.append(-1)
 	return tmp
 
-def changePOS(lst,posdct):
+def changePOSandWS(lst,posdct,wsdct):
 	for x in lst:
-		tmp = posdct[x[1]]
-		x[tmp+2] = '1'
+		try:
+			tmp = posdct[x[1]]
+			x[1] = ['0' for itm in range(len(posdct))]
+			x[1][tmp] = '1'
+		except KeyError:
+			pass
+		try:
+			tmp = wsdct[x[11]]
+			x[11] = ['0' for itm in range(len(wsdct))]
+			x[11][tmp] = '1'
+		except KeyError:
+			pass
+		ipdb.set_trace()
+		x = x[:1] + x[1] + x[2:11] + x[11] + x[12:]
 	return lst
 
 def calFeature(matrix,feacol):
@@ -89,11 +103,20 @@ def outFile(lst,filename):
 			# except TypeError:
 				# pass
 
+def outSeq(dct,filename):
+	with open(filename,'w') as f:
+	    for i in range(len(dct)):
+	        for x in dct:
+	            if dct[x] == i:
+	                f.write(x + '\t' + str(dct[x]) + '\n')
+
 
 if __name__ == "__main__":
-
-	trainlst = inFile('GENIA-CRF-TRAIN-5.txt')
-	testlst = inFile('GENIA-CRF-TEST-5.txt')
+	import sys
+	import time 
+	starttime = time.time()
+	trainlst = getFile('GENIA-CRF-TRAIN-5.txt')
+	testlst = getFile('GENIA-CRF-TEST-5.txt')
 
 	nedct={}
 	ne = set([x[-1] for x in trainlst])
@@ -101,18 +124,25 @@ if __name__ == "__main__":
 	posdct={}
 	pos = set(x[1] for x in trainlst)
 	posdct = {x:y for x,y in zip(pos,range(len(pos)))}  
+	ws = set([x[11] for x in trainlst])
+	wsdct = {x:y for x,y in zip(ws,range(len(ws)))} 
 
-	trainlst = changePOS(trainlst,posdct)
-	testlst = changePOS(testlst,posdct)
+	outSeq(wsdct,'wsdct')
+	outSeq(posdct,'posdct')
 
-	dnacol,rnacol,linecol,typecol,procol,feacol = featureSelect(trainlst)
+	pw_trainlst = changePOSandWS(trainlst,posdct,wsdct)
+	pw_testlst = changePOSandWS(testlst,posdct,wsdct)
+
+	# dnacol,rnacol,linecol,typecol,procol,feacol = featureSelect(pw_trainlst)
 	
-	matrix = [dnacol,rnacol,linecol,typecol,procol]
-	featuredct = calFeature(matrix,feacol)
-	#get top 15
-	featureIndex = getTop(featuredct,15)
-	new_trainlst = selectIndex(trainlst,featureIndex)
-	outFile(new_trainlst,'GENIA-CRF-TRAIN-5-15.txt')
+	# matrix = [dnacol,rnacol,linecol,typecol,procol]
+	# featuredct = calFeature(matrix,feacol)
+	# #get top 15
+	# featureIndex = getTop(featuredct,int(sys.argv[1]))
+	# new_trainlst = selectIndex(pw_trainlst,featureIndex)
+	# outFile(new_trainlst,'GENIA-CRF-TRAIN-5-' +sys.argv[1] +'.txt')
 
-	new_testlst = selectIndex(testlst,featureIndex)
-	outFile(new_testlst,'GENIA-CRF-TEST-5-15.txt')
+	# new_testlst = selectIndex(pw_testlst,featureIndex)
+	# outFile(new_testlst,'GENIA-CRF-TEST-5-' +sys.argv[1] +'.txt')
+	# endtime = time.time()
+	# print endtime-starttime

@@ -44,3 +44,5 @@ def evaluate(a,b):
 vallst = map(evaluate,tmp1,tmp2)
 recall = vallst.count('A')*1.0/(vallst.count('A')+vallst.count('C'))
 accuracy = vallst.count('A')*1.0/(vallst.count('A')+vallst.count('B'))
+
+print recall
