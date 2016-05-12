@@ -22,7 +22,7 @@ def featureSelect(lst):
 	typelst = []
 	prolst = []
 	for line in lst:	
-		tmp = line[2:]
+		tmp = line[1:]
 		if tmp[-1] == 'DNA':
 			dnalst.append(map(int,tmp[:-1]))
 		elif tmp[-1] == 'RNA':
@@ -51,22 +51,25 @@ def listAdd(a,b):
 	return tmp
 
 def changePOSandWS(lst,posdct,wsdct):
+	new_lst = []
 	for x in lst:
 		try:
 			tmp = posdct[x[1]]
 			x[1] = ['0' for itm in range(len(posdct))]
 			x[1][tmp] = '1'
 		except KeyError:
+			x[1] = ['0' for itm in range(len(posdct))]
 			pass
 		try:
 			tmp = wsdct[x[11]]
 			x[11] = ['0' for itm in range(len(wsdct))]
 			x[11][tmp] = '1'
 		except KeyError:
-			pass
-		ipdb.set_trace()
+			x[11] = ['0' for itm in range(len(wsdct))]
+		# ipdb.set_trace()
 		x = x[:1] + x[1] + x[2:11] + x[11] + x[12:]
-	return lst
+		new_lst.append(x)
+	return new_lst
 
 def calFeature(matrix,feacol):
 	featuredct = {}
@@ -133,16 +136,16 @@ if __name__ == "__main__":
 	pw_trainlst = changePOSandWS(trainlst,posdct,wsdct)
 	pw_testlst = changePOSandWS(testlst,posdct,wsdct)
 
-	# dnacol,rnacol,linecol,typecol,procol,feacol = featureSelect(pw_trainlst)
+	dnacol,rnacol,linecol,typecol,procol,feacol = featureSelect(pw_trainlst)
 	
-	# matrix = [dnacol,rnacol,linecol,typecol,procol]
-	# featuredct = calFeature(matrix,feacol)
-	# #get top 15
-	# featureIndex = getTop(featuredct,int(sys.argv[1]))
-	# new_trainlst = selectIndex(pw_trainlst,featureIndex)
-	# outFile(new_trainlst,'GENIA-CRF-TRAIN-5-' +sys.argv[1] +'.txt')
+	matrix = [dnacol,rnacol,linecol,typecol,procol]
+	featuredct = calFeature(matrix,feacol)
+	#get top 15
+	featureIndex = getTop(featuredct,int(sys.argv[1]))
+	new_trainlst = selectIndex(pw_trainlst,featureIndex)
+	outFile(new_trainlst,'GENIA-CRF-TRAIN-5-' +sys.argv[1] +'.txt')
 
-	# new_testlst = selectIndex(pw_testlst,featureIndex)
-	# outFile(new_testlst,'GENIA-CRF-TEST-5-' +sys.argv[1] +'.txt')
-	# endtime = time.time()
-	# print endtime-starttime
+	new_testlst = selectIndex(pw_testlst,featureIndex)
+	outFile(new_testlst,'GENIA-CRF-TEST-5-' +sys.argv[1] +'.txt')
+	endtime = time.time()
+	print endtime-starttime
