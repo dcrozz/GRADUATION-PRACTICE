@@ -46,3 +46,5 @@ recall = vallst.count('A')*1.0/(vallst.count('A')+vallst.count('C'))
 accuracy = vallst.count('A')*1.0/(vallst.count('A')+vallst.count('B'))
 
 print recall
+
+

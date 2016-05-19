@@ -1,5 +1,7 @@
+import pprint
+import sys
 lst = []
-infile = open('result_file2')
+infile = open(sys.argv[1])
 for line in infile:
 	try:
 		cur_line = line.strip().split('\t')
@@ -15,12 +17,10 @@ for itm in ne:
 	matrix[itm] = {x:0 for x in  ne}
 
 
-
 for itm in lst:
 	matrix[itm[0]][itm[1]] += 1
-
-# to excel draw a pic
-for itm in matrix:
-	sum =  reduce()
-
-
+pprint.pprint(matrix)
+#with open(sys.argv[1]+'_matrix','w') as f:
+#	for x in matrix:
+#
+	

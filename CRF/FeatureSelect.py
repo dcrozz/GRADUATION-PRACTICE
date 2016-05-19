@@ -1,16 +1,26 @@
 """
-Feature Selection by Chi measure
+Feature Selection by Chi measure that can control numbers of labels
+example:
+py filename feature_number label1 label2
+
+
+To be done (any amount of label)
 """
 #coding:utf-8
-import ipdb
-def getFile(filename):
+def getFile(filename,label1,label2):
 	lst = []	
 	with open(filename) as f:
-		for line in f.readlines():
+		#for test modify the line to 10
+		for line in f.readlines()[:10]:
 			cur_line = line.strip().split('\t')
 			try:
-				cur_line[2]
-				lst.append(cur_line)
+				cur_line[2]	
+				if cur_line[-1] != label1 and cur_line[-1] != label2:
+					cur_line.pop()
+					cur_line.append('0')
+					lst.append(cur_line)
+				else:
+					lst.append(cur_line)
 			except IndexError:
 				pass
 	return lst
@@ -33,15 +43,35 @@ def featureSelect(lst):
 			typelst.append(map(int,tmp[:-1]))
 		elif tmp[-1] == 'protein':
 			prolst.append(map(int,tmp[:-1]))
-	dnacol = reduce(listAdd,dnalst)
-	rnacol = reduce(listAdd,rnalst)
-	linecol = reduce(listAdd,linelst)
-	typecol = reduce(listAdd,typelst)
-	procol = reduce(listAdd,prolst)
+	try:
+		dnacol = reduce(listAdd,dnalst)
+	except TypeError:
+		dnacol = []
+	try:
+		rnacol = reduce(listAdd,rnalst)
+	except TypeError:
+		rnacol = []
+	try:
+		linecol = reduce(listAdd,linelst)
+	except TypeError:
+		linecol = []
+	try:
+		typecol = reduce(listAdd,typelst)
+	except TypeError:
+		typecol = []
+	try:
+		procol = reduce(listAdd,prolst)
+	except TypeError:
+		procol = []
 	feacol = reduce(listAdd,[dnacol,rnacol,linecol,typecol,procol])
 	return dnacol,rnacol,linecol,typecol,procol,feacol
 
 def listAdd(a,b):
+	if a==[] or b==[]:
+		if a==[]:
+			return b
+		else:
+			return a
 	tmp = []
 	for x,y in zip(a,b):
 		try:
@@ -73,15 +103,19 @@ def changePOSandWS(lst,posdct,wsdct):
 
 def calFeature(matrix,feacol):
 	featuredct = {}
-	for j in range(len(dnacol)):
+	fealen = max([len(i) for i in matrix])
+	for j in range(fealen):
 		Sigma = 0
 		for i in matrix:
-			Oij = i[j]
-			Eij = sum(i)*feacol[j]
-			try:
-				Sigma += (Oij - Eij)*(Oij - Eij)*1.0/Eij
-			except ZeroDivisionError:
-				Sigma = -1
+			if len(i) < fealen:
+				continue
+			else:
+				Oij = i[j]
+				Eij = sum(i)*feacol[j]
+				try:
+					Sigma += (Oij - Eij)*(Oij - Eij)*1.0/Eij
+				except ZeroDivisionError:
+					Sigma = -1
 		featuredct[str(j)] = Sigma
 	sorteddict= sorted(featuredct.iteritems(), key=lambda d:d[1], reverse = True)
 	return sorteddict
@@ -117,9 +151,10 @@ def outSeq(dct,filename):
 if __name__ == "__main__":
 	import sys
 	import time 
+	import ipdb
 	starttime = time.time()
-	trainlst = getFile('GENIA-CRF-TRAIN-5.txt')
-	testlst = getFile('GENIA-CRF-TEST-5.txt')
+	trainlst = getFile('GENIA-CRF-TRAIN-5.txt',sys.argv[2],sys.argv[3])
+	testlst = getFile('GENIA-CRF-TEST-5.txt',sys.argv[2],sys.argv[3])
 
 	nedct={}
 	ne = set([x[-1] for x in trainlst])
@@ -143,9 +178,9 @@ if __name__ == "__main__":
 	#get top 15
 	featureIndex = getTop(featuredct,int(sys.argv[1]))
 	new_trainlst = selectIndex(pw_trainlst,featureIndex)
-	outFile(new_trainlst,'GENIA-CRF-TRAIN-5-' +sys.argv[1] +'.txt')
+	outFile(new_trainlst,'GENIA-CRF-TRAIN-5-' + sys.argv[1] + '-' + sys.argv[2] + '-' + sys.argv[3]  +'.txt')
 
 	new_testlst = selectIndex(pw_testlst,featureIndex)
-	outFile(new_testlst,'GENIA-CRF-TEST-5-' +sys.argv[1] +'.txt')
+	outFile(new_testlst,'GENIA-CRF-TEST-5-' + sys.argv[1] + '-' + sys.argv[2] + '-' + sys.argv[3]  +'.txt')
 	endtime = time.time()
 	print endtime-starttime
