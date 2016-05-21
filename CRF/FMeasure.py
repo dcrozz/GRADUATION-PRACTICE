@@ -31,13 +31,12 @@ def evaluate(a,b):
 	#return map(lambda x,y: x == y ,a,b)
 	if a != '0' and a == b:
 		return 'A'
-	elif a == '0' and a == b:
-		ver_B.append([a,b])
+	elif a == '0' and a != b:
 		return 'B'
 	elif a != '0' and a != b:
 		ver_C.append([a,b])
 		return 'C'
-	elif a == '0' and a !=b:
+	elif a == '0' and a ==b:
 		return 'D'
 # test_cal = reduce(list.__add__,tmp1)
 # test_tes = reduce(list.__add__,tmp2)
@@ -45,6 +44,6 @@ vallst = map(evaluate,tmp1,tmp2)
 recall = vallst.count('A')*1.0/(vallst.count('A')+vallst.count('C'))
 accuracy = vallst.count('A')*1.0/(vallst.count('A')+vallst.count('B'))
 
-print recall
-
-
+print 'precision = ' + str(accuracy)
+print 'recall = ' + str(recall)
+print 'F-score = ' + str(2*accuracy*recall/(accuracy+recall))
