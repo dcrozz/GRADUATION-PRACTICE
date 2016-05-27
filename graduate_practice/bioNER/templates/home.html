@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>WELCOME</title>
+	<script src="/static/js/bootstrap.js"></script>
+	<script src="/static/js/bootstrap.min.js"></script>
+	<script src="/static/js/jquery.min.js"></script>
+	<script src="/static/js/jquery.js"></script>
+	<script src="/static/js/test.js"></script>
+	<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/static/css/bootstrap.css">
+	<link rel="stylesheet" href="/static/css/bootstrap-theme.css">
+</head>
+<body role="document">
+<nav class="navbar navbar-inverse">
+<div class="container">
+<div class="navbar-header">
+<button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+<span class="sr-only">Toggle navigation</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+<a href="#" class="navbar-brand">医学命名实体识别</a>
+</div>
+<div class="collapse navbar-collapse" id="navbar">
+<ul class="nav navbar-nav">
+<li class="active"><a href="#">Home</a></li>
+<li><a href="#about">About</a></li>
+<li><a href="#contact">Contact</a></li>
+</ul>
+</div><!--/.nav-collapse -->
+</div>
+</nav>
+
+<div class="container theme-showcase" role="main">
+<h1>说明：</h1>
+<p>此系统用于在英文文献中识别医学命名实体，可通过手动输入或者上传文本的方式，得到的结果将在页面下方展示</p>
+
+<form action="/bioNER/process/" method="get" enctype='multipart/form-data'>
+	{% csrf_token %}
+	<textarea class="form-control" rows="3" name='NERtext' id='NERtext'></textarea>
+	<!-- <div>或者</div> -->
+	<!-- <button type="" class="btn btn-default">上传文本</button><input type='file' name='upload' id='upload' hidden></input> -->
+	<button class="btn btn-default"type='button' value='选择处理' id='submit'>选择处理</button>
+</form>
+<table class="table table-bordered">
+<thead id='output'>
+<tr>
+<th>#</th>
+<th>First Name</th>
+<th>Last Name</th>
+</tr>
+</thead>
+
+</table>
+
+
+</body>
+</html>
