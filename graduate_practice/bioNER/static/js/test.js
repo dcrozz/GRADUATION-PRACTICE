@@ -5,7 +5,7 @@ $(document).ready(function(){
 			//$('#addresult').html(ret)
 			//alert(ret);
 			$.each(ret,function(i,item){
-				$("#output").append("<tr><th scope=\"row\">3</th><td>"+i+"</td><td>"+item+"</td></tr>");	
+				$("#output").append("<tr><th scope=\"row\"></th><td>"+item[0]+"</td><td>"+item[1]+"</td></tr>");	
 			});
 		})
 	});

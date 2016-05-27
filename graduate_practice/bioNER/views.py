@@ -5,21 +5,30 @@ from django.http import JsonResponse
 #from .forms import AddForm
 import nltk
 import re
+import CRFPP
 
 def index(request):
     return render(request, 'home.html')
 
 def process(request):
-#实现分词
     NERtext = request.GET['NERtext2']
-    sens = nltk.sent_tokenize(NERtext)
-    words = []
-    for sent in sens:
-        words+=nltk.word_tokenize(sent)
-    #  dct= {itm:0 for itm in words}
-    output = featureExtract(words)
-    rna_result = featureSelect(output)
-    return JsonResponse(rna_result,safe=False)
+    input_text = nltk.sent_tokenize(NERtext)
+#segWord 为分词结果 eg.: ["Number", "of", "glucocorticoid", "receptors", "in", "lymphocytes", "and", "their", "sensitivity", "to", "hormone", "action"]
+    segWord = []
+    for line in input_text:
+        segWord += nltk.word_tokenize(line)
+#exFeature为特征选择后的结果 eg.:[["Number", "NNP", 0, 0, 1, 0, 0, 0, 0, 0, 0, "Aaaa", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],["of",...]...]
+    exFeature = featureExtract(segWord)
+#特征提取要做3次,分别得到selRNAFeature,selDNAFeature,selcellFeature,
+    selRNAFeature = featureSelect(exFeature,'RNA')
+    selDNAFeature = featureSelect(exFeature,'DNA')
+    selcellFeature = featureSelect(exFeature,'cell')
+    rnaresult = crfTest(selRNAFeature,'RNA')
+    dnaresult = crfTest(selDNAFeature,'DNA')
+    cellresult = crfTest(selcellFeature,'cell')
+    mergelst = zip(rnaresult,dnaresult,cellresult)
+    totalresult = mergeClassifier(mergelst)
+    return JsonResponse(totalresult,safe=False)
 
 def featureExtract(lst):
     POSTagsList = getPOSTags(lst)
@@ -90,42 +99,41 @@ def loadFeatures(file_name):
             dct[cur_line[0]] = cur_line[1]
     return dct
 
-def featureSelect(lst):
+def featureSelect(lst,feature):
     featuresdct = loadFeatures('bioNER/static/totalfeatures.txt')
+#扩展lst的特征到1653维
     new_lst = changePOSandWS(lst,featuresdct)
-    rnafeaturedct = loadFeatures('bioNER/static/selectedfeatures-20-RNA-protein.txt')
-    dnafeaturedct = loadFeatures('bioNER/static/selectedfeatures-20-DNA-protein.txt')
-    cellfeaturedct = loadFeatures('bioNER/static/selectedfeatures-20-DNA-protein.txt')
-    rna_lst =[]
-    dna_lst =[]
-    cell_lst =[]
-    for itm in new_lst:
-        tmp =[]
-        tmp.append(itm[0])
-        for index in rnafeaturedct.itervalues():
-            tmp.append(itm[int(index)])
-        rna_lst.append(tmp)
-    for itm in new_lst:
-        tmp =[]
-        tmp.append(itm[0])
-        for index in dnafeaturedct.itervalues():
-            tmp.append(itm[int(index)])
-        dna_lst.append(tmp)
-    for itm in new_lst:
-        tmp =[]
-        tmp.append(itm[0])
-        for index in cellfeaturedct.itervalues():
-            tmp.append(itm[int(index)])
-        cell_lst.append(tmp)
-    dnamodel = 'bioNER/static/model-5-20-DNA-protein'
-    rnamodel = 'bioNER/static/model-5-20-RNA-protein'
-    cellmodel = 'bioNER/static/model-5-20-cell-cell'
-    rnatag = crfTest(rna_lst,rnamodel)
-    rnaresult = []
-    for i in range(len(rna_lst)):
-        tmp = [ rna_lst[i][0],rnatag[i] ]
-        rnaresult.append(tmp)
-    return rnaresult
+    if feature == "DNA":
+        dnafeaturedct = loadFeatures('bioNER/static/selectedfeatures-20-DNA-protein.txt')
+        dna_lst =[]
+        for itm in new_lst:
+            tmp =[]
+            tmp.append(itm[0])
+            for index in dnafeaturedct.itervalues():
+                tmp.append(itm[int(index)])
+            dna_lst.append(tmp)
+        #返回Chi测度最高的前20特征
+        return dna_lst
+    elif feature == "RNA":
+        rnafeaturedct = loadFeatures('bioNER/static/selectedfeatures-20-RNA-protein.txt')
+        rna_lst =[]
+        for itm in new_lst:
+            tmp =[]
+            tmp.append(itm[0])
+            for index in rnafeaturedct.itervalues():
+                tmp.append(itm[int(index)])
+            rna_lst.append(tmp)
+        return rna_lst
+    elif feature == "cell":
+        cellfeaturedct = loadFeatures('bioNER/static/selectedfeatures-20-cell_type-cell_line.txt')
+        cell_lst =[]
+        for itm in new_lst:
+            tmp =[]
+            tmp.append(itm[0])
+            for index in cellfeaturedct.itervalues():
+                tmp.append(itm[int(index)])
+            cell_lst.append(tmp)
+        return cell_lst
    
 def changePOSandWS(lst,featuredct):
 	new_lst = []
@@ -146,10 +154,14 @@ def changePOSandWS(lst,featuredct):
 		# ipdb.set_trace()
 		new_lst.append(x)
 	return new_lst
-import CRFPP
-def crfTest(lst,model):
-    tagger = CRFPP.Tagger("-m" + model)
-    #tagger = CRFPP.Tagger("-m model-5-20-RNA-protein")
+
+def crfTest(lst,model_name):
+    if model_name == "DNA":
+        tagger = CRFPP.Tagger("-m bioNER/static/model-5-20-DNA-protein")
+    elif model_name == "RNA":
+        tagger = CRFPP.Tagger("-m bioNER/static/model-5-20-RNA-protein")
+    elif model_name == "cell":
+        tagger = CRFPP.Tagger("-m bioNER/static/model-5-20-cell-cell")
     for line in lst:
         tagger.add('\t'.join(map(str,line)))
     tagger.parse()
@@ -157,5 +169,23 @@ def crfTest(lst,model):
     size = tagger.size()
     xsize = tagger.xsize()
     taglst = [tagger.y2(i) for i in range(len(lst))]
-    return taglst
+    result = []
+    for i in range(len(lst)):
+        tmp = [ lst[i][0],taglst[i] ]
+        result.append(tmp)
+    return result
 
+def mergeClassifier(lst):
+	newlst = []
+	for itm in lst:
+		tmp = []
+                if itm[0][-1] == '0' and itm[1][-1] == '0' and itm[2][-1] == '0':
+                        tmp= itm[0]
+                elif itm[0][-1] != '0':
+                        tmp = itm[0]
+                elif itm[1][-1] != '0':
+                        tmp = itm[1]
+                elif itm[2][-1] != '0':
+                        tmp = itm[2]
+		newlst.append(tmp)
+	return newlst

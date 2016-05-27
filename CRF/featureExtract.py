@@ -241,12 +241,3 @@ print "Feature Extraction Complete"
 ###close output files....end of program
 inFileGenia.close()
 oFileTrain.close()
-
-
-
-
-
-
-
-
-
