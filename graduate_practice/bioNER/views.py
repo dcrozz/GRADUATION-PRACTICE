@@ -18,8 +18,8 @@ def process(request):
         words+=nltk.word_tokenize(sent)
     #  dct= {itm:0 for itm in words}
     output = featureExtract(words)
-    rna_lst,dna_lst,cell_lst = featureSelect(output)
-    return JsonResponse(rna_lst,safe=False)
+    rna_result = featureSelect(output)
+    return JsonResponse(rna_result,safe=False)
 
 def featureExtract(lst):
     POSTagsList = getPOSTags(lst)
@@ -117,7 +117,15 @@ def featureSelect(lst):
         for index in cellfeaturedct.itervalues():
             tmp.append(itm[int(index)])
         cell_lst.append(tmp)
-    return rna_lst,dna_lst,cell_lst
+    dnamodel = 'bioNER/static/model-5-20-DNA-protein'
+    rnamodel = 'bioNER/static/model-5-20-RNA-protein'
+    cellmodel = 'bioNER/static/model-5-20-cell-cell'
+    rnatag = crfTest(rna_lst,rnamodel)
+    rnaresult = []
+    for i in range(len(rna_lst)):
+        tmp = [ rna_lst[i][0],rnatag[i] ]
+        rnaresult.append(tmp)
+    return rnaresult
    
 def changePOSandWS(lst,featuredct):
 	new_lst = []
@@ -138,3 +146,16 @@ def changePOSandWS(lst,featuredct):
 		# ipdb.set_trace()
 		new_lst.append(x)
 	return new_lst
+import CRFPP
+def crfTest(lst,model):
+    tagger = CRFPP.Tagger("-m" + model)
+    #tagger = CRFPP.Tagger("-m model-5-20-RNA-protein")
+    for line in lst:
+        tagger.add('\t'.join(map(str,line)))
+    tagger.parse()
+    ysize = tagger.ysize()
+    size = tagger.size()
+    xsize = tagger.xsize()
+    taglst = [tagger.y2(i) for i in range(len(lst))]
+    return taglst
+
