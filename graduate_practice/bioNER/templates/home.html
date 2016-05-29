@@ -1,60 +1,122 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>WELCOME</title>
-	<script src="/static/js/bootstrap.js"></script>
-	<script src="/static/js/bootstrap.min.js"></script>
-	<script src="/static/js/jquery.min.js"></script>
-	<script src="/static/js/jquery.js"></script>
-	<script src="/static/js/test.js"></script>
-	<link rel="stylesheet" href="/static/css/bootstrap.min.css">
-	<link rel="stylesheet" href="/static/css/bootstrap.css">
-	<link rel="stylesheet" href="/static/css/bootstrap-theme.css">
-</head>
-<body role="document">
-<nav class="navbar navbar-inverse">
-<div class="container">
-<div class="navbar-header">
-<button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
-<span class="sr-only">Toggle navigation</span>
-<span class="icon-bar"></span>
-<span class="icon-bar"></span>
-<span class="icon-bar"></span>
-</button>
-<a href="#" class="navbar-brand">医学命名实体识别</a>
-</div>
-<div class="collapse navbar-collapse" id="navbar">
-<ul class="nav navbar-nav">
-<li class="active"><a href="#">Home</a></li>
-<li><a href="#about">About</a></li>
-<li><a href="#contact">Contact</a></li>
-</ul>
-</div><!--/.nav-collapse -->
-</div>
-</nav>
+	<head>
+		<title>WELCOME</title>
+		<script src="/static/js/bootstrap.js"></script>
+		<script src="/static/js/bootstrap.min.js"></script>
+		<script src="/static/js/jquery.min.js"></script>
+		<script src="/static/js/jquery.js"></script>
+		<script src="/static/js/test.js"></script>
+		<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+		<link rel="stylesheet" href="/static/css/bootstrap.css">
+		<link rel="stylesheet" href="/static/css/bootstrap-theme.css">
+		<link rel="stylesheet" href="/static/css/test.css">
+	</head>
+	<body role="document">
+		<nav class="navbar navbar-inverse">
+			<div class="container">
+				<div class="navbar-header">
+					<button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a href="#" class="navbar-brand">医学命名实体识别</a>
+				</div>
+				<div class="collapse navbar-collapse" id="navbar">
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="#">Home</a></li>
+						<li><a href="#about">About</a></li>
+						<li><a href="#contact">Contact</a></li>
+					</ul>
+				</div><!--/.nav-collapse -->
+			</div>
+		</nav>
 
-<div class="container theme-showcase" role="main">
-<h1>说明：</h1>
-<p>此系统用于在英文文献中识别医学命名实体，可通过手动输入或者上传文本的方式，得到的结果将在页面下方展示</p>
+		<div class="container theme-showcase" role="main">
+			<h1>说明：</h1>
+			<p>此系统用于在英文文献中识别医学命名实体，可通过手动输入或者上传文本的方式，得到的结果将在页面下方展示</p>
+			<p>例如:Octamer-binding proteins from B or HeLa cells stimulate transcription of the immunoglobulin heavy-chain promoter in vitro.</p>
 
-<form action="/bioNER/process/" method="get" enctype='multipart/form-data'>
-	{% csrf_token %}
-	<textarea class="form-control" rows="3" name='NERtext' id='NERtext'></textarea>
-	<!-- <div>或者</div> -->
-	<!-- <button type="" class="btn btn-default">上传文本</button><input type='file' name='upload' id='upload' hidden></input> -->
-	<button class="btn btn-default"type='button' value='选择处理' id='submit'>选择处理</button>
-</form>
-<table class="table table-bordered">
-<thead id='output'>
-<tr>
-<th>#</th>
-<th>First Name</th>
-<th>Last Name</th>
-</tr>
-</thead>
+			<form action="/bioNER/process/" method="get" enctype='multipart/form-data'>
+				{% csrf_token %}
+				<textarea class="form-control" rows="3" name='NERtext' id='NERtext'></textarea>
+				<!-- <div>或者</div> -->
+				<!-- <button type="" class="btn btn-default">上传文本</button><input type='file' name='upload' id='upload' hidden></input> -->
+				<button class="btn btn-default"type='button' value='选择处理' id='submit'>选择处理</button>
+			</form>
+			<div class='output' id='output' hidden>
+				<div id="extable">
+				<table class="table table-bordered">
+					<thead id='exFeature'>
+						<tr>
+							<th class='resulttitle'>特征提取</th>
+							<th class='token'>Token</th>
+							<th class='resultlabel' colspan=21>Features</th>
+						</tr>
+					</thead>
+				</table>
+				</div>
+				<div id="seltable">
+				<table class="table table-bordered">
+					<thead id='selDNAFeature'>
+						<tr>
+							<th class='resulttitle'>特征选择(DNA)</th>
+							<th class='token'>Token</th>
+							<th class='resultlabel' colspan=20>Features</th>
+						</tr>
+					</thead>
+				</table>
+				<table class="table table-bordered">
+					<thead id='selRNAFeature'>
+						<tr>
+							<th   class='resulttitle'>特征选择(RNA)</th>
+							<th class='token'>Token</th>
+							<th class='resultlabel'colspan=20>Features</th>
+						</tr>
+					</thead>
+				</table>
+				<table class="table table-bordered">
+					<thead id='selcellFeature'>
+						<tr>
+							<th  class='resulttitle'>特征选择(CELL)</th>
+							<th class='token'>Token</th>
+							<th class='resultlabel'colspan=20>Features</th>
+						</tr>
+					</thead>
+				</table>
+				</div>
+				<div id="resulttable">
 
-</table>
-
-
-</body>
+				<table class="table table-bordered">
+					<thead id='dnaresult'>
+						<tr>
+							<th  class='resulttitle'>DNA-protein分类</th>
+							<th class='token'>Token</th>
+							<th class='resultlabel'>Label</th>
+						</tr>
+					</thead>
+				</table>
+				<table class="table table-bordered">
+					<thead id='rnaresult'>
+						<tr>
+							<th class='resulttitle'>RNA-protein分类</th>
+							<th class='token'>Token</th>
+							<th class='resultlabel'>Label</th>
+						</tr>
+					</thead>
+				</table>
+				<table class="table table-bordered">
+					<thead id='cellresult'>
+						<tr>
+							<th class='resulttitle'>cell_type-cell_line分类</th>
+							<th class='token'>Token</th>
+							<th class='resultlabel'>Label</th>
+						</tr>
+					</thead>
+				</table>
+				</div>
+			</div>
+	</body>
 </html>

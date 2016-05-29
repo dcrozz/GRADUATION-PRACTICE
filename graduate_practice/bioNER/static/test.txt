@@ -1,11 +1,1 @@
-Bees and wasps form part of the order Hymenoptera (which also includes ants), and within this order the species that cause the most frequent allergic reactions are the Vespidae (wasps, yellow jackets and hornets), and the Apinae (honeybees).1
-
-Bee and wasp stings contain allergenic proteins. In wasps, these are predominantly phospholipase A1,2 hyaluronidase2 and antigen 5,3 and in bees are phospholipase A2 and hyaluronidase.4 Following an initial sting, a type 1 hypersensitivity reaction may occur in some individuals which produces the IgE antibody. This sensitises cells to the allergen, and any subsequent exposure to the allergen may cause the allergen to bind to the IgE molecules, which results in an allergic reaction.
-
-These allergens typically produce an intense, burning pain followed by erythema (redness) and a small area of oedema (swelling) at the site of the sting. The symptoms produced following a sting can be classified into non-allergic reactions, such as local reactions, and allergic reactions, such as extensive local reactions, anaphylactic systemic reactions and delayed systemic reactions.5-6 Systemic allergic reactions may occur in venom-sensitive patients immediately following a sting,7 and can vary in severity, with initially mild symptoms sometimes progressing to critical conditions within seconds.1
-
-The most severe systemic allergic reaction is known as anaphylaxis. Anaphylactic reactions are of rapid onset (typically up to 15 minutes post sting) and can manifest in different ways. Initial symptoms are usually cutaneous followed by hypotension, with light-headedness, fainting or collapse. Some people develop respiratory symptoms due to an asthma-like
-
-response or laryngeal oedema. In severe reactions, hypotension, circulatory disturbances, and breathing difficulty can progress to fatal cardio-respiratory arrest.
-
-Anaphylaxis occurs more commonly in males and in people under 20 years of age and can be severe and potentially fatal.8
+Octamer-binding proteins from B or HeLa cells stimulate	transcription of the immunoglobulin heavy-chain promoter in vitro.

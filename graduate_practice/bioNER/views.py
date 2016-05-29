@@ -23,12 +23,24 @@ def process(request):
     selRNAFeature = featureSelect(exFeature,'RNA')
     selDNAFeature = featureSelect(exFeature,'DNA')
     selcellFeature = featureSelect(exFeature,'cell')
+#3个result为使用crfpp
     rnaresult = crfTest(selRNAFeature,'RNA')
     dnaresult = crfTest(selDNAFeature,'DNA')
     cellresult = crfTest(selcellFeature,'cell')
     mergelst = zip(rnaresult,dnaresult,cellresult)
     totalresult = mergeClassifier(mergelst)
-    return JsonResponse(totalresult,safe=False)
+    output = {
+        'segWord':segWord,
+        'exFeature':exFeature,
+        'selRNAFeature':selRNAFeature,
+        'selDNAFeature':selDNAFeature,
+        'selcellFeature':selcellFeature,
+        'rnaresult':rnaresult,
+        'dnaresult':dnaresult,
+        'cellresult':cellresult,
+        'totalresult':totalresult
+        }
+    return JsonResponse(output)
 
 def featureExtract(lst):
     POSTagsList = getPOSTags(lst)
