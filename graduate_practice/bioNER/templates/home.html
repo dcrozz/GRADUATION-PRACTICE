@@ -27,8 +27,7 @@
 				<div class="collapse navbar-collapse" id="navbar">
 					<ul class="nav navbar-nav">
 						<li class="active"><a href="#">Home</a></li>
-						<li><a href="#about">About</a></li>
-						<li><a href="#contact">Contact</a></li>
+						<li><a href="#about" id='about'>About</a></li>
 					</ul>
 				</div><!--/.nav-collapse -->
 			</div>
@@ -44,77 +43,112 @@
 				<textarea class="form-control" rows="3" name='NERtext' id='NERtext'></textarea>
 				<!-- <div>或者</div> -->
 				<!-- <button type="" class="btn btn-default">上传文本</button><input type='file' name='upload' id='upload' hidden></input> -->
-				<button class="btn btn-default"type='button' value='选择处理' id='submit'>选择处理</button>
+				<button class="btn btn-default"type='button' value="进行识别" id='submit'>进行识别</button>
 			</form>
+
+
+
 			<div class='output' id='output' hidden>
 				<div id="extable">
-				<table class="table table-bordered">
-					<thead id='exFeature'>
+				<button  class="btn btn-default" id = 'exFeature'>特征提取</button>
+				<table class="table table-striped" id='table1' hidden>
+					<thead>
 						<tr>
-							<th class='resulttitle'>特征提取</th>
 							<th class='token'>Token</th>
 							<th class='resultlabel' colspan=21>Features</th>
 						</tr>
 					</thead>
+					<tbody id='exFeatureOut'></tbody>
 				</table>
 				</div>
+
+
+
 				<div id="seltable">
-				<table class="table table-bordered">
-					<thead id='selDNAFeature'>
+				<button type="button" class="btn btn-primary" id = 'selDNAFeature'>特征选择(DNA)</button>
+	
+				<table class="table table-striped" id='table2' hidden>
+					<thead>
 						<tr>
-							<th class='resulttitle'>特征选择(DNA)</th>
 							<th class='token'>Token</th>
 							<th class='resultlabel' colspan=20>Features</th>
 						</tr>
 					</thead>
+					<tbody id='selDNAFeatureOut'></tbody>
 				</table>
-				<table class="table table-bordered">
-					<thead id='selRNAFeature'>
+
+				<button class="btn btn-primary" id = 'selRNAFeature'>特征选择(RNA)</button>
+				<table class="table table-striped" id='table3' hidden>
+					<thead>
 						<tr>
-							<th   class='resulttitle'>特征选择(RNA)</th>
 							<th class='token'>Token</th>
 							<th class='resultlabel'colspan=20>Features</th>
 						</tr>
 					</thead>
+					<tbody id='selRNAFeatureOut'></tbody>
 				</table>
-				<table class="table table-bordered">
-					<thead id='selcellFeature'>
+
+				<button class="btn btn-primary" id='selcellFeature'>特征选择(CELL)</button>
+				<table class="table table-striped" id='table4' hidden>
+					<thead>
 						<tr>
-							<th  class='resulttitle'>特征选择(CELL)</th>
 							<th class='token'>Token</th>
 							<th class='resultlabel'colspan=20>Features</th>
 						</tr>
 					</thead>
+					<tbody id='selcellFeatureOut'></tbody>
 				</table>
 				</div>
+
+
+
 				<div id="resulttable">
 
-				<table class="table table-bordered">
+				<button id='dnaresult' type="button" class="btn btn-info">DNA-protein分类</button>
+				<table class="table table-striped" id='table5' hidden>
 					<thead id='dnaresult'>
 						<tr>
-							<th  class='resulttitle'>DNA-protein分类</th>
 							<th class='token'>Token</th>
 							<th class='resultlabel'>Label</th>
 						</tr>
 					</thead>
+					<tbody id='dnaresultOut'></tbody>
 				</table>
-				<table class="table table-bordered">
-					<thead id='rnaresult'>
+
+
+				<button id='rnaresult' type="button" class="btn btn-info">RNA-protein分类</button>
+				<table class="table table-striped" id='table6' hidden>
+					<thead>
 						<tr>
-							<th class='resulttitle'>RNA-protein分类</th>
 							<th class='token'>Token</th>
 							<th class='resultlabel'>Label</th>
 						</tr>
 					</thead>
+					<tbody id='rnaresultOut'></tbody>
 				</table>
-				<table class="table table-bordered">
-					<thead id='cellresult'>
+
+
+				<button id='cellresult' type="button" class="btn btn-info">cell_type-cell_line分类</button>
+				<table class="table table-striped" id='table7' hidden>
+					<thead>
 						<tr>
-							<th class='resulttitle'>cell_type-cell_line分类</th>
 							<th class='token'>Token</th>
 							<th class='resultlabel'>Label</th>
 						</tr>
 					</thead>
+					<tbody id='cellresultOut'></tbody>
+				</table>
+				</div>
+				<div>
+				<button id='totalresult'type="button" class="btn btn-success">Totalresult分类</button>
+				<table class="table table-striped" id='table8' hidden>
+					<thead>
+						<tr>
+							<th class='token'>Token</th>
+							<th class='resultlabel'>Label</th>
+						</tr>
+					</thead>
+					<tbody id='totalresultOut'></tbody>
 				</table>
 				</div>
 			</div>
